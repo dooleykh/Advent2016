@@ -33,18 +33,16 @@ object Day2 {
             room._1.foreach(c => {
                 if (c != '-') charCount = charCount + (c -> (charCount.getOrElse(c, 0) + 1))
             })
-            val checksumCand = charCount
-                               .values
-                               .toList
-                               .sorted
-                               .reverse
-                               .take(5)
-                               .distinct
-                               .map(v => charCount.toList.filter(kv => kv._2 == v).map(kv => kv._1))
-                               .map(characters => characters.sorted.mkString(""))
-                               .mkString("")
-                               .take(5)
-            room._3 == checksumCand})
+            val checksumCand = charCount.foldLeft(Map[Int, String]()) {(occurrances, kv) => {
+                                            occurrances + (kv._2 -> (occurrances.getOrElse(kv._2, "") + kv._1.toString))
+                                        }}
+                                        .toList
+                                        .sortWith((x, y) => y._1 < x._1) //sort with a negated comparator
+                                        .map(_._2.sorted)
+                                        .mkString("")
+                                        .take(5)
+            room._3 == checksumCand}
+        )
     }
 
     def decrypt(encrypted: String, offset: Int) : String = {
