@@ -13,12 +13,12 @@ object Day8 {
 
     def main(args: Array[String]) : Unit = {
         val input = openFile().mkString
-        //println(decompress1(input).length)
-        println(decompress2(input))
+        println(decompress1(input)) //Part 1
+        println(decompress2(input)) //Part 2
     }
 
-    def decompress1(message: String) : String = {
-        var uncompressed = ""
+    def decompress1(message: String) : Int = {
+        var length = 0
         var i = 0
         while (i < message.length) {
             if (message(i) == '(') {
@@ -35,23 +35,19 @@ object Day8 {
                     i += 1
                 }
                 i += 1
-                (1 to repetitions.toInt).foreach(r => {
-                    uncompressed += message.substring(i, i + charCount.toInt)
-                })
+                length += charCount.toInt * repetitions.toInt
                 i += charCount.toInt
             }
             else {
-                uncompressed += message(i)
+                length += 1
                 i += 1
             }
         }
-        return uncompressed
+        length
     }
 
-    //Answer is 10964557606
-    //TODO: Improve the performance of part 2 (took 10 minutes or so to run this time...)
-    def decompress2(message: String) : BigInt = {
-        var length = BigInt(0)
+    def decompress2(message: String) : Long = {
+        var length = 0L
         var i = 0
         while (i < message.length) {
             if (message(i) == '(') {
@@ -67,13 +63,13 @@ object Day8 {
                     repetitions += message(i)
                     i += 1
                 }
+                val charCountInt = charCount.toInt
+                val repetitionsInt = repetitions.toInt
+
                 i += 1
-                var substring = ""
-                (1 to repetitions.toInt).foreach(r => {
-                    substring += message.substring(i, i + charCount.toInt)
-                })
-                length += decompress2(substring)
-                i += charCount.toInt
+
+                length += decompress2(message.substring(i, i + charCountInt)) * repetitionsInt
+                i += charCountInt
             }
             else {
                 length += 1
